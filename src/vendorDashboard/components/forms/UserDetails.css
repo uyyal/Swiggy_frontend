@@ -2,7 +2,7 @@
 .user-details-container {
   padding: 20px;
   max-width: 1000px;
-  margin: 80px 80px 0 auto; /* Centered and avoids margin-left on all screens */
+  margin: 80px 200px 0 auto; /* Centered and avoids margin-left on all screens */
   background-color: #ffffff;
   border-radius: 16px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
@@ -44,6 +44,7 @@
 /* Tablet: 768px */
 @media (max-width: 768px) {
   .user-details-container {
+    margin-top: 120px;
     padding: 15px;
     width: 95%;
   }
@@ -62,6 +63,7 @@
 /* Mobile L: 425px */
 @media (max-width: 425px) {
   .user-details-container {
+    margin-top: 120px;
     padding: 10px;
     width: 98%;
   }
@@ -93,6 +95,7 @@
 /* Mobile S: 320px */
 @media (max-width: 320px) {
   .user-details-container {
+    margin-top: 120px;
     padding: 8px;
     width: 100%;
   }

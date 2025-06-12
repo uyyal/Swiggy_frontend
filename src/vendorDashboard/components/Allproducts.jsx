@@ -6,13 +6,15 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const Allproducts = () => {
   const [products, setProducts] = useState([]);
-  const [firmIdExists, setFirmIdExists] = useState(true); // for conditionally rendering content
+  const [firmIdExists, setFirmIdExists] = useState(true);
+  const [loading, setLoading] = useState(true); // New loading state
 
   const productHandler = async () => {
     const firmId = localStorage.getItem('firmId');
 
     if (!firmId) {
       setFirmIdExists(false);
+      setLoading(false); // Stop loading if no firm
       toast.error('Please add a firm first to view products.');
       return;
     }
@@ -27,6 +29,8 @@ const Allproducts = () => {
     } catch (error) {
       console.error("Failed to fetch products", error);
       toast.error('Failed to fetch products');
+    } finally {
+      setLoading(false); // End loading after fetch
     }
   };
 
@@ -61,7 +65,9 @@ const Allproducts = () => {
       <ToastContainer position="top-right" autoClose={3000} />
       <h2 className="all-products-heading">All Products</h2>
 
-      {!firmIdExists ? (
+      {loading ? (
+        <p className="loading">Loading products...</p>
+      ) : !firmIdExists ? (
         <p className="no-products">Please add a firm to view products.</p>
       ) : products.length === 0 ? (
         <p className="no-products">No products added yet</p>
