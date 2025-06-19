@@ -14,9 +14,12 @@
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   flex-wrap: wrap; /* Prevent overlap on small screens */
 }
+.company a{
+  margin-left: 100px;
+
+}
 
 .company a, .logins a {
-  margin-left: 100px;
   color: white;
   font-weight: bolder;
   text-decoration: none;

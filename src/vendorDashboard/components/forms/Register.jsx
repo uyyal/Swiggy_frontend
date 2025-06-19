@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { API_URL } from '../../Data/api';
 import Navbar from '../Navbar';
@@ -14,12 +14,24 @@ const Register = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const usernameRef = useRef(null);
+
+  useEffect(() => {
+    usernameRef.current.focus(); // Auto focus on username field
+  }, []);
+
   const togglePasswordVisibility = () => {
     setShowPassword(prev => !prev);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!username.trim() || !email.trim() || !password.trim()) {
+      toast.error("All fields are required");
+      return;
+    }
+
     setLoading(true);
     try {
       const response = await fetch(`${API_URL}/vendor/register`, {
@@ -27,6 +39,7 @@ const Register = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password })
       });
+
       const data = await response.json();
       console.log("Server Response:", data);
 
@@ -53,7 +66,7 @@ const Register = () => {
       <ToastContainer />
       <h3>Vendor Registration</h3><br />
       <div className="registerform">
-        <form className='form2' onSubmit={handleSubmit}>
+        <form className='form2' onSubmit={handleSubmit} noValidate>
           <label className='label2'>Username</label><br />
           <input
             type="text"
@@ -62,6 +75,7 @@ const Register = () => {
             className='input2'
             onChange={(e) => setUsername(e.target.value)}
             placeholder='Enter your Name'
+            ref={usernameRef}
             required
           /><br />
 

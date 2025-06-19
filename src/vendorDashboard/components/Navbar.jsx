@@ -4,19 +4,19 @@ import './Navbar.css';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const isLoggedIn = !!localStorage.getItem('loginToken'); // ensures boolean
+  const isLoggedIn = !!localStorage.getItem('loginToken');
 
   const handleLogout = () => {
     localStorage.removeItem('loginToken');
     localStorage.removeItem('firmId');
-    navigate('/Login');
-    // window.location.reload(); // Refresh Navbar after logout
+    localStorage.removeItem('vendorId'); // 🛠️ Added to fully logout
+    navigate('/Login', { replace: true }); // 👈 Better UX
   };
 
   return (
     <div className='navbar'>
       <div className="company">
-        <Link to='/'>Vendor Dashboard</Link>
+        <Link to='/'>Swiggy Clone</Link>
       </div>
       <div className="logins">
         {!isLoggedIn ? (

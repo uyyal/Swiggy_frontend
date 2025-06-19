@@ -18,39 +18,42 @@ const Login = () => {
 
   const loginHandler = async (e) => {
     e.preventDefault();
+
+    if (!email.trim() || !password.trim()) {
+      toast.error("All fields are required");
+      return;
+    }
+
     try {
       const response = await fetch(`${API_URL}/vendor/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ email, password }),
       });
 
       const data = await response.json();
 
       if (response.ok) {
+        const { token, vendorId, vendorFirmId } = data;
+
         toast.success("Login successful");
+
+        // Store login info
+        localStorage.setItem("loginToken", token);
+        localStorage.setItem("vendorId", vendorId);
+        localStorage.setItem("firmId", vendorFirmId || "");
+
+        // Clear form
         setEmail("");
         setPassword("");
 
-        localStorage.setItem('loginToken', data.token);
-
-        const vendorId = data.vendorId;
-        if (vendorId) {
-          const vendorresponse = await fetch(`${API_URL}/vendor/single-vendor/${vendorId}`);
-          const vendorData = await vendorresponse.json();
-
-          if (vendorresponse.ok) {
-            const vendorFirmId = vendorData.vendorFirmId;
-            localStorage.setItem('firmId', vendorFirmId);
-          }
-        }
-
+        // Redirect to landing page
         navigate('/');
-        // window.location.reload(); // Force reload for Navbar to update
       } else {
-        toast.error(data.message || "Login failed");
+        toast.error(data.error || "Login failed");
       }
     } catch (error) {
+      console.error("Login request failed:", error);
       toast.error("Login failed due to server error");
     }
   };
@@ -60,7 +63,7 @@ const Login = () => {
       <Navbar />
       <ToastContainer />
       <h2>Vendor Login</h2><br />
-      <form className='form1' onSubmit={loginHandler}>
+      <form className='form1' onSubmit={loginHandler} noValidate>
         <label className='label1'>Email</label><br />
         <input
           className='input1'
@@ -70,6 +73,7 @@ const Login = () => {
           type="email"
           placeholder='Enter your email'
           autoComplete="email"
+          required
         /><br /><br />
 
         <label className='label1'>Password</label><br />
@@ -82,6 +86,7 @@ const Login = () => {
             type={showPassword ? "text" : "password"}
             placeholder='Enter your password'
             autoComplete="current-password"
+            required
           />
           <span
             className="toggle-password"

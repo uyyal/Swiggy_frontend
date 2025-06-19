@@ -11,15 +11,13 @@ import Allproducts from './vendorDashboard/components/Allproducts';
 import ProtectedRoute from './vendorDashboard/components/ProtectedRoute';
 import UserDetails from './vendorDashboard/components/forms/UserDetails';
 
+// ✅ Layout for protected pages
 const Layout = ({ children }) => {
-  const location = useLocation();
-  const hideLayout = location.pathname === '/Login' || location.pathname === '/Register';
-
   return (
     <>
-      {!hideLayout && <Navbar />}
+      <Navbar />
       <div className="main-container">
-        {!hideLayout && <Sidebar />}
+        <Sidebar />
         <div className="content">{children}</div>
       </div>
     </>
@@ -29,18 +27,64 @@ const Layout = ({ children }) => {
 const App = () => {
   return (
     <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/Login" element={<Login />} />
-          <Route path="/Register" element={<Register />} />
-          <Route path="/" element={<ProtectedRoute><Landingpage /></ProtectedRoute>} />
-          <Route path="/AddFirm" element={<ProtectedRoute><AddFirm /></ProtectedRoute>} />
-          <Route path="/AddProduct" element={<ProtectedRoute><Addproduct /></ProtectedRoute>} />
-          <Route path="/AllProducts" element={<ProtectedRoute><Allproducts /></ProtectedRoute>} />
-          <Route path="/UserDetails" element={<ProtectedRoute><UserDetails /></ProtectedRoute>} />
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/Login" element={<Login />} />
+        <Route path="/Register" element={<Register />} />
 
-        </Routes>
-      </Layout>
+        {/* Protected Routes wrapped in Layout */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Landingpage />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/AddFirm"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <AddFirm />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/AddProduct"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Addproduct />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/AllProducts"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Allproducts />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/UserDetails"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <UserDetails />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        
+      </Routes>
     </BrowserRouter>
   );
 };
