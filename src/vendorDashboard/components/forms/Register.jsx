@@ -1,121 +1,84 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { API_URL } from '../../Data/api';
-import Navbar from '../Navbar';
-import './Register.css';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ThreeCircles } from 'react-loader-spinner';
 
-const Register = () => {
+const Register = ({ showLoginHandler }) => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Set loading to false initially
   const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
 
-  const usernameRef = useRef(null);
-
-  useEffect(() => {
-    usernameRef.current.focus(); // Auto focus on username field
-  }, []);
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(prev => !prev);
+  const handleShowPassword = () => {
+    setShowPassword(!showPassword);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!username.trim() || !email.trim() || !password.trim()) {
-      toast.error("All fields are required");
-      return;
-    }
-
-    setLoading(true);
+    setLoading(true); // Set loading to true when the request starts
     try {
       const response = await fetch(`${API_URL}/vendor/register`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ username, email, password })
       });
 
       const data = await response.json();
-      console.log("Server Response:", data);
-
       if (response.ok) {
-        toast.success("Vendor registered successfully");
+        console.log(data);
         setUsername("");
         setEmail("");
         setPassword("");
-        setTimeout(() => navigate('/Login'), 1500);
+        alert("Vendor registered successfully");
+        showLoginHandler();
       } else {
-        toast.error(data.message || "Registration failed");
+        setError(data.error);
+        alert("Registration Failed, Contact Admin")
       }
     } catch (error) {
       console.error("Registration failed", error);
-      toast.error("Registration failed");
+      alert("Registration failed");
     } finally {
-      setLoading(false);
+      setLoading(false); 
     }
   };
 
   return (
-    <div className='register'>
-      <Navbar />
-      <ToastContainer />
-      <h3>Vendor Registration</h3><br />
-      <div className="registerform">
-        <form className='form2' onSubmit={handleSubmit} noValidate>
-          <label className='label2'>Username</label><br />
-          <input
-            type="text"
-            name='username'
-            value={username}
-            className='input2'
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder='Enter your Name'
-            ref={usernameRef}
-            required
-          /><br />
+    <div className="registerSection">
+     {loading && 
+      <div className="loaderSection">
+      <ThreeCircles
+        visible={loading}
+        height={100}
+        width={100}
+        color="#4fa94d"
+        ariaLabel="three-circles-loading"
+        wrapperStyle={{}}
+        wrapperClass=""
+      />
+      <p>Hi, Your Registration under process</p>
+    </div>
+     }
+{!loading &&     <form className='authForm' onSubmit={handleSubmit} autoComplete='off'>
 
-          <label className='label2'>Email</label><br />
-          <input
-            type="email"
-            name='email'
-            value={email}
-            className='input2'
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder='Enter your email'
-            required
-          /><br />
-
-          <label className='label2'>Password</label><br />
-          <div className="password-wrapper">
-            <input
-              className='input2'
-              name='password'
-              value={password}
-              type={showPassword ? "text" : "password"}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder='Enter your password'
-              required
-            />
-            <span
-              className="toggle-password"
-              onClick={togglePasswordVisibility}
-              title={showPassword ? "Hide Password" : "Show Password"}
-            >
-              {showPassword ? '🙈' : '👁️'}
-            </span>
-          </div>
-          <br />
-
-          <button className='btn2' type='submit' disabled={loading}>
-            {loading ? "Registering..." : "SignUp"}
-          </button>
-        </form>
-      </div>
+<h3>Vendor Register</h3>
+<label>Username</label>
+<input type="text" name='username' value={username} onChange={(e) => setUsername(e.target.value)} placeholder='enter your name' /><br />
+<label>Email</label>
+<input type="text" name='email' value={email} onChange={(e) => setEmail(e.target.value)} placeholder='enter your email' /><br />
+<label>Password</label>
+<input type={showPassword ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} name='password' placeholder='enter your password' /><br />
+<span className='showPassword'
+  onClick={handleShowPassword}
+>{showPassword ? 'Hide' : 'Show'}</span>
+<div className="btnSubmit">
+  <button type='submit'>Submit</button>
+</div>
+</form>}
+  
     </div>
   );
 };

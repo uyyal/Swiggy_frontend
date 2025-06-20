@@ -1,184 +1,144 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react'
 import { API_URL } from '../../Data/api';
-import './Addproduct.css';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ThreeCircles } from 'react-loader-spinner';
 
-const Addproduct = () => {
-  const [productName, setProductname] = useState("");
-  const [price, setPrice] = useState("");
-  const [category, setCategory] = useState([]);
-  const [bestSeller, setBestseller] = useState(null); // changed here
-  const [image, setImage] = useState(null);
-  const [description, setDescription] = useState("");
 
-  const Categorychange = (event) => {
-    const value = event.target.value;
-    if (category.includes(value)) {
-      setCategory(category.filter((item) => item !== value));
-    } else {
-      setCategory([...category, value]);
-    }
-  };
+const AddProduct = () => {
+    const [productName, setProductName] = useState("");
+    const [price, setPrice] = useState("");
+    const [category, setCategory] = useState([]);
+    const [bestSeller, setBestSeller] = useState(false);
+    const [image, setImage] = useState(null);
+    const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false); 
 
-  const Imageupload = (event) => {
-    const selectImage = event.target.files[0];
-    setImage(selectImage);
-  };
 
-  // Updated handler to store string values
-  const handlebestSeller = (event) => {
-    setBestseller(event.target.value);
-  };
+    const handleCategoryChange = (event)=>{
+      const value = event.target.value;
+        if(category.includes(value)){
+          setCategory(category.filter((item)=> item !== value));
+        }else{
+          setCategory([...category, value])
+        }
+  }
 
-  const handleAddProduct = async (e) => {
-    e.preventDefault();
-    try {
-      const loginToken = localStorage.getItem('loginToken');
-      const firmId = localStorage.getItem('firmId');
+  const handleBestSeller =(event)=>{
+    const value = event.target.value === 'true'
+      setBestSeller(value)
+  }
+  const handleImageUpload =(event)=>{
+    const selectedImage = event.target.files[0];
+    setImage(selectedImage)
+}
 
-      if (!loginToken || !firmId) {
-        toast.error("User not authenticated");
-        return;
+  const handleAddProduct = async(e)=>{
+      e.preventDefault()
+    setLoading(true); 
+
+      try {
+        const loginToken = localStorage.getItem('loginToken');
+          const firmId = localStorage.getItem('firmId')
+
+          if(!loginToken || !firmId){
+              console.error("user not authenticated")
+          }
+          
+        const formData = new FormData();
+        formData.append('productName', productName);
+        formData.append('price', price);
+        formData.append('description', description);
+        formData.append('bestSeller', bestSeller)
+        formData.append('image', image)
+
+        category.forEach((value)=>{
+          formData.append('category', value)
+        });
+   
+          const response = await fetch(`${API_URL}/product/add-product/${firmId}`, {
+            method:'POST',
+            body: formData
+          })
+            const data = await response.json()
+
+            if(response.ok){
+              alert('Product added succesfully')
+            }
+            setProductName("")
+            setPrice("");
+            setCategory([])
+            setBestSeller(false);
+            setImage(null);
+            setDescription("")
+
+      } catch (error) {
+          alert('Failed to add Product')
+      }finally {
+        setLoading(false); 
       }
+  }
 
-      if (bestSeller === null) {
-        toast.error("Please select if product is Best Seller or not");
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('productName', productName);
-      formData.append('price', price);
-      formData.append('description', description);
-      formData.append('image', image);
-      category.forEach((value) => {
-        formData.append('category', value);
-      });
-
-      // Convert string 'true'/'false' to boolean before appending
-      formData.append('bestSeller', bestSeller === 'true');
-
-      const response = await fetch(`${API_URL}/product/add-product/${firmId}`, {
-        method: 'POST',
-        body: formData
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        toast.success("Product added successfully");
-        // Reset form
-        setProductname("");
-        setPrice("");
-        setCategory([]);
-        setBestseller(null);
-        setImage(null);
-        setDescription("");
-      } else {
-        toast.error(data.message || "Failed to add product");
-      }
-
-    } catch (error) {
-      toast.error("Error while adding product");
-    }
-  };
-
-  return (
-    <div className='add-product'>
-      <ToastContainer position="top-right" autoClose={3000} />
-      <form className='form4' onSubmit={handleAddProduct}>
-        <h2 className='h2'>Add Product</h2>
-
-        <label className='label4'>Product Name</label>
-        <input
-          className='input4'
-          type="text"
-          value={productName}
-          onChange={(e) => setProductname(e.target.value)}
-          required
+    return (
+    <div className="firmSection">
+{loading &&         <div className="loaderSection">
+        <ThreeCircles
+          visible={loading}
+          height={100}
+          width={100}
+          color="#4fa94d"
+          ariaLabel="three-circles-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
         />
+        <p>Please wait, your product is being added...</p>
+      </div>}
+  {!loading && 
+    <form className="tableForm" onSubmit={handleAddProduct}>
+    <h3>Add Product</h3>
+        <label >Product Name</label>
+        <input type="text" value={productName} onChange={(e)=>setProductName(e.target.value)} />
+        <label >Price</label>
+        <input type="text" value={price} onChange={(e)=>setPrice(e.target.value)}/>
+        <div className="checkInp">
+     <label >Category</label>
+         <div className="inputsContainer">
+         <div className="checboxContainer">
+                 <label>Veg</label>
+                 <input type="checkbox" value="veg" checked ={category.includes('veg')}  onChange={handleCategoryChange}/>
+               </div>
+               <div className="checboxContainer">
+                 <label>Non-Veg</label>
+                 <input type="checkbox" value="non-veg" checked ={category.includes('non-veg')} onChange={handleCategoryChange} />
+               </div>
+         </div>
 
-        <label className='label4'>Price</label>
-        <input
-          className='input4'
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          required
-        />
+   </div>
+   <div className="checkInp">
+     <label >Best Seller</label>
+         <div className="inputsContainer">
+         <div className="checboxContainer">
+                 <label>Yes</label>
+                 <input type="radio" value="true" checked = {bestSeller=== true} onChange={handleBestSeller}/>
+               </div>
+               <div className="checboxContainer">
+                 <label>No</label>
+                 <input type="radio" value="false" checked = {bestSeller=== false} onChange={handleBestSeller}/>
+               </div>
+         </div>
 
-        <div className="check-box4">
-          <label className='label4'>Category</label>
-          <div className="category-row4">
-            <div className="checkcontainer4">
-              <label className='labelbox4'>Veg</label>
-              <input
-                className='inputbox4'
-                type="checkbox"
-                checked={category.includes('veg')}
-                value="veg"
-                onChange={Categorychange}
-              />
-            </div>
-            <div className="checkcontainer4">
-              <label className='labelbox4'>Non-Veg</label>
-              <input
-                className='inputbox4'
-                type="checkbox"
-                checked={category.includes('non-veg')}
-                value="non-veg"
-                onChange={Categorychange}
-              />
-            </div>
-          </div>
-        </div>
+   </div>
+       
+        <label >Description</label>
+        <input type="text" value={description} onChange={(e)=>setDescription(e.target.value)} />
+        <label >Firm Image</label>
+        <input type="file" onChange={handleImageUpload} />
+        <br />
+    <div className="btnSubmit">
+<button type='submit'>Submit</button>
+</div>
+   </form>
+  }
+ </div>
+  )
+}
 
-        <div className="check-box4">
-          <label className='label4'>Best Seller</label>
-          <div className="category-row4">
-            <div className="checkcontainer4">
-              <label className='labelbox4'>Yes</label>
-              <input
-                className='inputbox4'
-                type="radio"
-                value="true"
-                checked={bestSeller === 'true'}
-                onChange={handlebestSeller}
-              />
-            </div>
-            <div className="checkcontainer4">
-              <label className='labelbox4'>No</label>
-              <input
-                className='inputbox4'
-                type="radio"
-                value="false"
-                checked={bestSeller === 'false'}
-                onChange={handlebestSeller}
-              />
-            </div>
-          </div>
-        </div>
-
-        <label className='label4'>Description</label>
-        <input
-          className='input4'
-          type="text"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-
-        <label className='label4'>Firm Image</label>
-        <input
-          className='input4'
-          type="file"
-          onChange={Imageupload}
-          accept="image/*"
-        />
-
-        <button className='btn4' type='submit'>Submit</button>
-      </form>
-    </div>
-  );
-};
-
-export default Addproduct;
+export default AddProduct

@@ -1,116 +1,87 @@
-import React, { useState, useEffect } from 'react';
+import React,{useState, useEffect} from 'react'
 import { API_URL } from '../Data/api';
-import './Allproducts.css';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
-const Allproducts = () => {
-  const [products, setProducts] = useState([]);
-  const [firmIdExists, setFirmIdExists] = useState(true);
-  const [loading, setLoading] = useState(true); // New loading state
+const AllProducts = () => {
+    const [products, setProducts]= useState([]);
 
-  const productHandler = async () => {
-    const firmId = localStorage.getItem('firmId');
-
-    if (!firmId) {
-      setFirmIdExists(false);
-      setLoading(false); // Stop loading if no firm
-      toast.error('Please add a firm first to view products.');
-      return;
+    const productsHandler = async()=>{
+            const firmId = localStorage.getItem('firmId');
+        try {
+                const response = await fetch(`${API_URL}/product/${firmId}/products`);
+                const newProductsData = await response.json();
+                setProducts(newProductsData.products);
+                console.log(newProductsData);
+        } catch (error) {
+            console.error("failed to fetch products", error);
+            alert('failed to fetch products')
+        }
     }
 
-    try {
-      const response = await fetch(`${API_URL}/product/${firmId}/products`);
-      if (!response.ok) {
-        throw new Error('Failed to fetch products');
-      }
-      const newProductdata = await response.json();
-      setProducts(newProductdata.products || []);
-    } catch (error) {
-      console.error("Failed to fetch products", error);
-      toast.error('Failed to fetch products');
-    } finally {
-      setLoading(false); // End loading after fetch
+    useEffect(()=>{
+        productsHandler()
+        console.log('this is useEffect')
+    },[])
+
+    const deleteProductById = async(productId)=>{
+                try {
+                        const response = await fetch(`${API_URL}/product/${productId}`,{
+                            method: 'DELETE'
+                        })
+                    if(response.ok){
+                        setProducts(products.filter(product =>product._id !== productId));
+                        confirm("are you sure, you want to delete?")
+                        alert("Product deleted Successfully")
+                    }
+                } catch (error) {
+                    console.error('Failed to delete product');
+                    alert('Failed to delete product')
+                }
     }
-  };
 
-  useEffect(() => {
-    productHandler();
-  }, []);
-
-  const deleteProduct = async (productId) => {
-    const confirmed = window.confirm("Are you sure you want to delete?");
-    if (!confirmed) return;
-
-    try {
-      const response = await fetch(`${API_URL}/product/${productId}`, {
-        method: 'DELETE',
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        setProducts(products.filter(product => product._id !== productId));
-        toast.success(data.message || "Product deleted successfully");
-      } else {
-        toast.error(data.error || "Failed to delete product");
-      }
-    } catch (error) {
-      console.error('Failed to delete product', error);
-      toast.error('Failed to delete product');
-    }
-  };
-
+    
   return (
-    <div className="all-products-container">
-      <ToastContainer position="top-right" autoClose={3000} />
-      <h2 className="all-products-heading">All Products</h2>
-
-      {loading ? (
-        <p className="loading">Loading products...</p>
-      ) : !firmIdExists ? (
-        <p className="no-products">Please add a firm to view products.</p>
-      ) : products.length === 0 ? (
-        <p className="no-products">No products added yet</p>
-      ) : (
-        <div className="table-wrapper">
-          <table className="product-table">
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Price</th>
-                <th>Image</th>
-                <th>Delete</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((item) => (
-                <tr key={item._id}>
-                  <td>{item.productName}</td>
-                  <td>₹{item.price}</td>
-                  <td>
-                    {item.image ? (
-                      <img
-                        src={`${API_URL}/uploads/${item.image}`}
-                        alt={item.productName}
-                        className="product-image"
-                      />
-                    ) : (
-                      <span>No Image</span>
-                    )}
-                  </td>
-                  <td>
-                    <button className="delete-btn" onClick={() => deleteProduct(item._id)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+    <div className='productSection'>
+        {!products ? (
+            <p>No products added</p>
+        ) : (
+            <table className="product-table">
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Price</th>
+                        <th>Image</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {products.map((item)=>{
+                            return (
+                                <>
+                                    <tr key={item._id}>
+                                        <td>{item.productName}</td>
+                                        <td>₹{item.price}</td>
+                                    <td>
+                                        {item.image && (
+                                            <img src={`${API_URL}/uploads/${item.image}`} 
+                                            alt={item.productName}
+                                            style={{ width: '50px', height:'50px'  }}
+                                            />
+                                        )}
+                                    </td>
+                                    <td>
+                                        <button onClick={()=>deleteProductById(item._id)}
+                                        className='deleteBtn'
+                                        >Delete</button>
+                                    </td>
+                                    </tr>
+                                </>
+                            )
+                    })}
+                </tbody>
+            </table>
+         )}
     </div>
-  );
-};
+  )
+}
 
-export default Allproducts;
+export default AllProducts

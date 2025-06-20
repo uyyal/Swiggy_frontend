@@ -1,107 +1,86 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, {useState} from 'react'
 import { API_URL } from '../../Data/api';
-import Navbar from '../Navbar';
-import './Login.css';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ThreeCircles } from 'react-loader-spinner';
 
-const Login = () => {
+
+const Login = ({showWelcomeHandler}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false); 
+  const [showPassword, setShowPassword] = useState(false)
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(prev => !prev);
-  };
+  const handleShowPassword = ()=>{
+    setShowPassword(!showPassword);
+  }
+  
 
-  const loginHandler = async (e) => {
-    e.preventDefault();
+  const loginHandler = async(e)=>{
+      e.preventDefault();
+    setLoading(true); 
+      try {
+          const response = await fetch(`${API_URL}/vendor/login`, {
+            method: 'POST',
+            headers:{
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email, password})
+          })
+          const data = await response.json();
+          if(response.ok){
+            alert('Login success');
+            setEmail("");
+            setPassword("");
+            localStorage.setItem('loginToken', data.token);
+            showWelcomeHandler()
 
-    if (!email.trim() || !password.trim()) {
-      toast.error("All fields are required");
-      return;
-    }
-
-    try {
-      const response = await fetch(`${API_URL}/vendor/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        const { token, vendorId, vendorFirmId } = data;
-
-        toast.success("Login successful");
-
-        // Store login info
-        localStorage.setItem("loginToken", token);
-        localStorage.setItem("vendorId", vendorId);
-        localStorage.setItem("firmId", vendorFirmId || "");
-
-        // Clear form
-        setEmail("");
-        setPassword("");
-
-        // Redirect to landing page
-        navigate('/');
-      } else {
-        toast.error(data.error || "Login failed");
+          }
+          const vendorId = data.vendorId
+          console.log("checking for VendorId:",vendorId)
+          const vendorResponse = await fetch(`${API_URL}/vendor/single-vendor/${vendorId}`)
+          window.location.reload()
+          const vendorData = await vendorResponse.json();
+          if(vendorResponse.ok){
+            const vendorFirmId = vendorData.vendorFirmId;
+            const vendorFirmName = vendorData.vendor.firm[0].firmName;
+            localStorage.setItem('firmId', vendorFirmId);
+            localStorage.setItem('firmName', vendorFirmName)
+          }
+      } catch (error) {
+          alert("login fail")
+      } finally {
+        setLoading(false); 
       }
-    } catch (error) {
-      console.error("Login request failed:", error);
-      toast.error("Login failed due to server error");
-    }
-  };
+  }
 
   return (
-    <div className='login'>
-      <Navbar />
-      <ToastContainer />
-      <h2>Vendor Login</h2><br />
-      <form className='form1' onSubmit={loginHandler} noValidate>
-        <label className='label1'>Email</label><br />
-        <input
-          className='input1'
-          name='email'
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          type="email"
-          placeholder='Enter your email'
-          autoComplete="email"
-          required
-        /><br /><br />
-
-        <label className='label1'>Password</label><br />
-        <div className="password-wrapper">
-          <input
-            className='input1'
-            name='password'
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            type={showPassword ? "text" : "password"}
-            placeholder='Enter your password'
-            autoComplete="current-password"
-            required
-          />
-          <span
-            className="toggle-password"
-            onClick={togglePasswordVisibility}
-            title={showPassword ? "Hide Password" : "Show Password"}
-          >
-            {showPassword ? '🙈' : '👁️'}
-          </span>
-        </div><br />
-
-        <button className='btn1' type='submit'>Login</button><br />
-        <p>Don't have an account? <Link to="/Register">Create an Account</Link></p>
-      </form>
+    <div className="loginSection">
+{loading &&        <div className="loaderSection">
+        <ThreeCircles
+          visible={loading}
+          height={100}
+          width={100}
+          color="#4fa94d"
+          ariaLabel="three-circles-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+        <p>Login in process... Please wait</p>
+      </div>}
+     {!loading &&    <form  className='authForm' onSubmit={loginHandler} autoComplete='off'>
+        <h3>Vendor Login</h3>
+            <label>Email</label>
+            <input type="text" name='email' value = {email} onChange={(e)=>setEmail(e.target.value)} placeholder='enter your email'/><br />
+            <label>Password</label>
+            <input   type={showPassword? "text":"password"} name='password' value={password} onChange={(e)=>setPassword(e.target.value)} placeholder='enter your password'/><br />
+            <span className='showPassword'
+              onClick={handleShowPassword}
+              >{showPassword ? 'Hide' : 'Show'}</span>
+    <div className="btnSubmit">
+        <button type= 'submit'>Submit</button>
     </div>
-  );
-};
+        </form>}
+    </div>
+  )
+}
 
-export default Login;
+export default Login
