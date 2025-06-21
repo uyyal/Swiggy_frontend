@@ -1,122 +1,177 @@
-.register-section {
+/* Register Section Wrapper */
+.registerSection {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
   padding: 2rem;
-  background-color: #f8f8f8;
+  min-height: 100vh;
+  background-color: #f4f6f8;
 }
 
-.register-form {
-  background: white;
+/* Loader Section */
+.loaderSection {
+  text-align: center;
+  color: #333;
+}
+
+.loadingText {
+  margin-top: 1rem;
+  font-size: 16px;
+}
+
+/* Auth Form */
+.authForm {
+  background-color: white;
   padding: 2rem;
   border-radius: 10px;
-  max-width: 400px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
 }
 
-.register-heading {
+/* Title */
+.authTitle {
+  font-size: 24px;
+  font-weight: 600;
   text-align: center;
   margin-bottom: 1.5rem;
-  font-size: 24px;
   color: #333;
 }
 
-.register-label {
-  display: block;
-  margin-bottom: 0.3rem;
-  font-weight: 500;
-  color: #333;
+/* Labels */
+.authLabel {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #444;
 }
 
-.register-input {
-  width: 100%;
-  padding: 0.6rem;
-  margin-bottom: 1.2rem;
+/* Inputs */
+.authInput {
+  padding: 10px;
+  font-size: 15px;
+  margin-bottom: 1rem;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.password-wrapper {
+/* Password Field Wrapper */
+.passwordField {
   position: relative;
 }
 
-.toggle-password {
+/* 👁️ / 🙈 Toggle Icon */
+.showPassword {
   position: absolute;
-  right: 10px;
-  top: 30%;
+  right: 12px;
+  top: 10px;
   cursor: pointer;
-  font-size: 14px;
-  color: #666;
+  font-size: 18px;
 }
 
-.btn-submit-register {
+/* Error Text */
+.errorText {
+  color: red;
+  font-size: 13px;
+  margin-top: -8px;
+  margin-bottom: 1rem;
+}
+
+/* Button Container */
+.btnSubmit {
   text-align: center;
+  margin-top: 1rem;
 }
 
-.btn-register {
-  padding: 0.6rem 1.5rem;
+/* Submit Button */
+.submitButton {
   background-color: #4fa94d;
   color: white;
+  padding: 10px 24px;
+  font-size: 15px;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.loader-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
+.submitButton:hover {
+  background-color: #3c8739;
 }
 
-.loader-message {
-  font-size: 16px;
-  color: #333;
-}
+/* -------------------- Responsive Media Queries -------------------- */
 
+/* Tablet */
 @media (max-width: 768px) {
-  .register-form {
+  .authForm {
     padding: 1.5rem;
   }
-}
 
-@media (max-width: 425px) {
-  .register-input, .btn-register {
-    font-size: 14px;
-    padding: 0.5rem;
+  .authTitle {
+    font-size: 22px;
   }
 
-  .register-form {
+  .submitButton {
+    font-size: 14px;
+  }
+}
+
+/* Mobile L - 425px */
+@media (max-width: 425px) {
+  .authForm {
+    padding: 1.2rem;
+  }
+
+  .authInput {
+    font-size: 14px;
+  }
+
+  .showPassword {
+    font-size: 17px;
+    top: 9px;
+  }
+
+  .submitButton {
+    padding: 10px 20px;
+  }
+}
+
+/* Mobile M - 375px */
+@media (max-width: 375px) {
+  .authInput {
+    font-size: 13px;
+  }
+
+  .submitButton {
+    font-size: 13px;
+    width: 100%;
+  }
+}
+
+/* Mobile S - 320px */
+@media (max-width: 320px) {
+  .authForm {
     padding: 1rem;
   }
 
-  .register-heading {
+  .authTitle {
     font-size: 20px;
   }
-}
 
-@media (max-width: 375px) {
-  .register-input {
-    padding: 0.45rem;
-  }
-
-  .toggle-password {
+  .authInput {
     font-size: 12px;
-  }
-}
-
-@media (max-width: 320px) {
-  .register-form {
-    padding: 0.8rem;
+    padding: 8px;
   }
 
-  .register-heading {
-    font-size: 18px;
+  .showPassword {
+    font-size: 16px;
   }
 
-  .register-input {
-    font-size: 13px;
+  .submitButton {
+    font-size: 12px;
+    padding: 8px;
   }
 }

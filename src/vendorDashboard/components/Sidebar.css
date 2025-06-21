@@ -1,108 +1,53 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-ul {
-  list-style: none;
-}
-
-a {
-  text-decoration: none;
-  color: white;
-}
-
-.hamburger {
-  font-size: 28px;
-  padding: 16px;
+/* Menu Icon: now ALWAYS visible */
+.menu-icon {
+  font-size: 26px;
   cursor: pointer;
-  color: white;
-  background-color: #2c3e50;
+  padding: 15px;
+  display: block; /* ✅ always visible */
   position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1001;
+  top: 10px;
+  left: 10px;
+  z-index: 2000;
+  background-color: #1e1e2f;
+  color: white;
+  border-radius: 4px;
 }
 
-/* Sidebar styles */
-.sidebar {
+/* Sidebar container: initially hidden */
+.sideBarSection {
+  width: 220px;
+  background-color: #1e1e2f;
+  color: white;
   height: 100vh;
-  width: 250px;
-  background-color: #2c3e50;
   position: fixed;
   top: 0;
-  left: -250px;
-  transition: left 0.3s ease;
-  z-index: 1000;
-  padding-top: 60px; /* below navbar */
-  overflow-y: auto;
-}
-
-.sidebar.open {
   left: 0;
+  padding-top: 60px;
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out;
+  transform: translateX(-100%); /* ✅ hidden by default */
 }
 
-.sidebar ul {
-  display: flex;
-  flex-direction: column;
+/* When sidebar is open (menu toggled) */
+.sideBarSection.open {
+  transform: translateX(0); /* ✅ slide in */
 }
 
-.sidebar ul li {
-  padding: 16px 24px;
+/* Sidebar menu list */
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-.sidebar ul li a {
-  font-size: 20px;
-  font-weight: bolder;
-  color: white;
-  display: block;
-  transition: background-color 0.3s ease;
+/* Each menu item */
+.menu-item {
+  padding: 15px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  font-size: 16px;
 }
 
-.sidebar ul li a:hover {
-  background-color: #34495e;
-  border-radius: 5px;
-}
-
-/* Responsive widths */
-@media screen and (max-width: 768px) {
-  .sidebar {
-    width: 220px;
-  }
-
-  .sidebar ul li a {
-    font-size: 16px;
-    padding: 14px 20px;
-  }
-}
-
-@media screen and (max-width: 425px) {
-  .sidebar {
-    width: 200px;
-  }
-
-  .sidebar ul li a {
-    font-size: 15px;
-  }
-}
-
-@media screen and (max-width: 375px) {
-  .sidebar {
-    width: 180px;
-  }
-
-  .sidebar ul li a {
-    font-size: 14px;
-  }
-}
-
-@media screen and (max-width: 320px) {
-  .sidebar {
-    width: 160px;
-  }
-
-  .sidebar ul li a {
-    font-size: 13px;
-  }
+.menu-item:hover {
+  background-color: #33334d;
 }

@@ -1,20 +1,54 @@
-import React from "react";
+import React, { useState } from "react";
+import "./Sidebar.css";
 
 const Sidebar = ({
   showFirmHandler,
   showProductHandler,
   showAllProductsHandler,
-  showFirmTitle
 }) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
   return (
-    <div className="sideBarSection">
-      <ul>
-        {showFirmTitle ? <li onClick={showFirmHandler}>Add Firm</li> : "" }
-        <li onClick={showProductHandler}>Add Product</li>
-        <li onClick={showAllProductsHandler}>All Products</li>
-        <li>User Details</li>
-      </ul>
-    </div>
+    <>
+      <div className="menu-icon" onClick={toggleMenu}>
+        ☰
+      </div>
+
+      <div className={`sideBarSection ${menuOpen ? "open" : ""}`}>
+        <ul className="menu-list">
+          <li
+            className="menu-item"
+            onClick={() => {
+              showFirmHandler();
+              setMenuOpen(false);
+            }}
+          >
+            Add Firm
+          </li>
+          <li
+            className="menu-item"
+            onClick={() => {
+              showProductHandler();
+              setMenuOpen(false);
+            }}
+          >
+            Add Product
+          </li>
+          <li
+            className="menu-item"
+            onClick={() => {
+              showAllProductsHandler();
+              setMenuOpen(false);
+            }}
+          >
+            All Products
+          </li>
+          <li className="menu-item">User Details</li>
+        </ul>
+      </div>
+    </>
   );
 };
 

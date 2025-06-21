@@ -1,0 +1,117 @@
+.welcomeSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background: #f2f2f2;
+}
+
+.welcomeCard {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 16px;
+  max-width: 700px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+.welcomeTitle {
+  font-size: 28px;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.welcomeSubtitle {
+  font-size: 16px;
+  margin-bottom: 1rem;
+  color: #555;
+}
+
+.welcomeList {
+  text-align: left;
+  margin: 0 auto 1.5rem auto;
+  max-width: 500px;
+  padding-left: 1.2rem;
+  color: #444;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.welcomeList li {
+  margin-bottom: 0.5rem;
+  list-style-type: disc;
+}
+
+.landingImage {
+  margin-bottom: 1.5rem;
+}
+
+.welcomeImage {
+  max-width: 100%;
+  width: 300px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.welcomeFooter {
+  font-size: 15px;
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .welcomeCard {
+    padding: 1.5rem;
+  }
+
+  .welcomeTitle {
+    font-size: 24px;
+  }
+
+  .welcomeImage {
+    width: 240px;
+  }
+}
+
+@media (max-width: 425px) {
+  .welcomeTitle {
+    font-size: 22px;
+  }
+
+  .welcomeSubtitle,
+  .welcomeFooter {
+    font-size: 14px;
+  }
+
+  .welcomeImage {
+    width: 200px;
+  }
+}
+
+@media (max-width: 375px) {
+  .welcomeTitle {
+    font-size: 20px;
+  }
+
+  .welcomeImage {
+    width: 180px;
+  }
+}
+
+@media (max-width: 320px) {
+  .welcomeTitle {
+    font-size: 18px;
+  }
+
+  .welcomeSubtitle,
+  .welcomeFooter {
+    font-size: 13px;
+  }
+
+  .welcomeImage {
+    width: 160px;
+  }
+}
